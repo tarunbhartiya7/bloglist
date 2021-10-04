@@ -4,9 +4,9 @@ This is a POC for nodejs and express. Database used for this application is mong
 
 ## Start
 
-yarn install
-yarn start
-yarn dev - to run with watch mode on
+- yarn install
+- yarn start
+- yarn dev - to run with watch mode on
 
 create a `.env` file after cloning the repo and add PORT=3003
 
