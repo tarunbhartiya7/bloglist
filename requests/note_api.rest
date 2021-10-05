@@ -12,3 +12,12 @@ content-type: application/json
     "likes": 10
 }
 
+###
+
+POST http://localhost:3003/api/blogs/
+content-type: application/json
+
+{
+    "author": "JJ"
+}
+

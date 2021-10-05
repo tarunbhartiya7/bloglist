@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
+require('express-async-errors')
 
 const logger = require('./utils/logger')
 const config = require('./utils/config')
