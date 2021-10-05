@@ -21,3 +21,7 @@ content-type: application/json
     "author": "JJ"
 }
 
+###
+
+DELETE  http://localhost:3003/api/blogs/615ba8f368f5f375229e48b2
+

@@ -4,7 +4,11 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
-const { initialBlogs, blogsInDb } = require('../utils/list_helper')
+const {
+  initialBlogs,
+  blogsInDb,
+  nonExistingId,
+} = require('../utils/list_helper')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -80,6 +84,55 @@ describe('addition of a new blog', () => {
     }
 
     await api.post('/api/blogs').send(newBlog).expect(400)
+  })
+})
+
+describe('deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogAtStart = await blogsInDb()
+    const blogToDelete = blogAtStart[0]
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+
+    const blogs = await blogsInDb()
+
+    expect(blogs).toHaveLength(initialBlogs.length - 1)
+
+    const contents = blogs.map((r) => r.title)
+
+    expect(contents).not.toContain(blogToDelete.title)
+  })
+
+  test('fails with statuscode 404 if id does not exist', async () => {
+    const validNonexistingId = await nonExistingId()
+
+    await api.delete(`/api/blogs/${validNonexistingId}`).expect(404)
+  })
+
+  test('fails with statuscode 400 id is invalid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445'
+
+    await api.delete(`/api/blogs/${invalidId}`).expect(400)
+  })
+})
+
+describe('updation of a blog', () => {
+  test('succeeds with status code 200', async () => {
+    const blogAtStart = await blogsInDb()
+    const blogToUpdate = blogAtStart[0]
+    blogToUpdate.likes = 0
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(blogToUpdate)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogs = await blogsInDb()
+    expect(blogs).toHaveLength(initialBlogs.length)
+
+    const contents = blogs.find((r) => r.title === blogToUpdate.title)
+    expect(contents.likes).toBe(blogToUpdate.likes)
   })
 })
 
