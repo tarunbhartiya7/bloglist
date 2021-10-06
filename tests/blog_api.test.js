@@ -12,27 +12,54 @@ const {
   nonExistingId,
 } = require('../utils/tests_helper')
 
+let token
+
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(initialBlogs)
+  await User.deleteMany({})
+
+  const testUser = {
+    username: 'root',
+    password: 'password',
+  }
+
+  const passwordHash = await bcrypt.hash(testUser.password, 10)
+  const user = new User({ username: testUser.username, passwordHash })
+
+  await user.save()
+
+  const response = await api.post('/api/login').send(testUser)
+  token = response.body.token
+
+  const updated = initialBlogs.map((blog) => ({
+    ...blog,
+    user: user._id,
+  }))
+
+  await Blog.insertMany(updated)
 })
 
 describe('when there is initially some blogs saved', () => {
   test('blog list application returns the blog posts in the JSON format', async () => {
     await api
       .get('/api/blogs')
+      .set('Authorization', 'Bearer ' + token)
       .expect(200)
       .expect('Content-Type', /application\/json/)
   })
 
   test('all blogs are returned', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api
+      .get('/api/blogs')
+      .set('Authorization', 'Bearer ' + token)
 
     expect(response.body).toHaveLength(initialBlogs.length)
   })
 
   test('a specific blog is within the returned blogs', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api
+      .get('/api/blogs')
+      .set('Authorization', 'Bearer ' + token)
 
     const contents = response.body.map((r) => r.title)
 
@@ -40,32 +67,15 @@ describe('when there is initially some blogs saved', () => {
   })
 
   test('the unique identifier property of the blog posts is named id,', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api
+      .get('/api/blogs')
+      .set('Authorization', 'Bearer ' + token)
 
     expect(response.body[0].id).toBeDefined()
   })
 })
 
 describe('addition of a new blog', () => {
-  let token
-
-  beforeEach(async () => {
-    const testUser = {
-      username: 'root',
-      password: 'password',
-    }
-
-    await User.deleteMany({})
-
-    const passwordHash = await bcrypt.hash(testUser.password, 10)
-    const user = new User({ username: testUser.username, passwordHash })
-
-    await user.save()
-
-    const response = await api.post('/api/login').send(testUser)
-    token = response.body.token
-  })
-
   test('succeeds with valid data', async () => {
     const newBlog = {
       title: 'ES6 patterns',
@@ -121,7 +131,10 @@ describe('deletion of a blog', () => {
     const blogAtStart = await blogsInDb()
     const blogToDelete = blogAtStart[0]
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', 'Bearer ' + token)
+      .expect(204)
 
     const blogs = await blogsInDb()
 
@@ -135,13 +148,19 @@ describe('deletion of a blog', () => {
   test('fails with statuscode 404 if id does not exist', async () => {
     const validNonexistingId = await nonExistingId()
 
-    await api.delete(`/api/blogs/${validNonexistingId}`).expect(404)
+    await api
+      .delete(`/api/blogs/${validNonexistingId}`)
+      .set('Authorization', 'Bearer ' + token)
+      .expect(404)
   })
 
   test('fails with statuscode 400 id is invalid', async () => {
     const invalidId = '5a3d5da59070081a82a3445'
 
-    await api.delete(`/api/blogs/${invalidId}`).expect(400)
+    await api
+      .delete(`/api/blogs/${invalidId}`)
+      .set('Authorization', 'Bearer ' + token)
+      .expect(400)
   })
 })
 
@@ -153,6 +172,7 @@ describe('updation of a blog', () => {
 
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Authorization', 'Bearer ' + token)
       .send(blogToUpdate)
       .expect(200)
       .expect('Content-Type', /application\/json/)
