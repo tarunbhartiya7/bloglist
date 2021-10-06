@@ -1,14 +1,16 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 const supertest = require('supertest')
 
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const {
   initialBlogs,
   blogsInDb,
   nonExistingId,
-} = require('../utils/list_helper')
+} = require('../utils/tests_helper')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -45,6 +47,25 @@ describe('when there is initially some blogs saved', () => {
 })
 
 describe('addition of a new blog', () => {
+  let token
+
+  beforeEach(async () => {
+    const testUser = {
+      username: 'root',
+      password: 'password',
+    }
+
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash(testUser.password, 10)
+    const user = new User({ username: testUser.username, passwordHash })
+
+    await user.save()
+
+    const response = await api.post('/api/login').send(testUser)
+    token = response.body.token
+  })
+
   test('succeeds with valid data', async () => {
     const newBlog = {
       title: 'ES6 patterns',
@@ -55,6 +76,7 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', 'Bearer ' + token)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -73,7 +95,10 @@ describe('addition of a new blog', () => {
       url: 'https://reactpatterns.com/',
     }
 
-    const response = await api.post('/api/blogs').send(newBlog)
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', 'Bearer ' + token)
+      .send(newBlog)
 
     expect(response.body.likes).toBe(0)
   })
@@ -83,7 +108,11 @@ describe('addition of a new blog', () => {
       author: 'Michael Chan',
     }
 
-    await api.post('/api/blogs').send(newBlog).expect(400)
+    await api
+      .post('/api/blogs')
+      .set('Authorization', 'Bearer ' + token)
+      .send(newBlog)
+      .expect(400)
   })
 })
 

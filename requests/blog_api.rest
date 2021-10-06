@@ -4,9 +4,10 @@ GET http://localhost:3003/api/blogs/
 
 POST http://localhost:3003/api/blogs/
 content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYxNWQxNTgwNTdkZGJjY2Q2MWE2MWMzYyIsImlhdCI6MTYzMzQ5OTAxOCwiZXhwIjoxNjMzNTAyNjE4fQ.GKyQi3bIWhPgq46-C-e2QTf3vFZUr0js3cqMiEAKRwU
 
 {
-    "title": "Javascript is awesome!",
+    "title": "Momo is awesome!",
     "author": "JJ",
     "url": "http://jj.com",
     "likes": 10

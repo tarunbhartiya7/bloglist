@@ -2,6 +2,7 @@ const orderBy = require('lodash/orderBy')
 const countBy = require('lodash/countBy')
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const initialBlogs = [
   {
@@ -98,6 +99,11 @@ const blogsInDb = async () => {
   return blogs.map((blog) => blog.toJSON())
 }
 
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map((u) => u.toJSON())
+}
+
 module.exports = {
   dummy,
   totalLikes,
@@ -107,4 +113,5 @@ module.exports = {
   initialBlogs,
   nonExistingId,
   blogsInDb,
+  usersInDb,
 }

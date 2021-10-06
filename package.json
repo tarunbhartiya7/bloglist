@@ -8,15 +8,19 @@
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
-    "test:api": "yarn test tests/blog_api.test.js"
+    "test:blog-api": "yarn test tests/blog_api.test.js",
+    "test:user-api": "yarn test tests/user_api.test.js"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
-    "mongoose": "^6.0.8"
+    "mongoose": "^6.0.8",
+    "mongoose-unique-validator": "^3.0.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
