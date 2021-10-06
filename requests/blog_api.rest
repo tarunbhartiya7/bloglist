@@ -1,13 +1,14 @@
 GET http://localhost:3003/api/blogs/
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYxNWQxNTgwNTdkZGJjY2Q2MWE2MWMzYyIsImlhdCI6MTYzMzUwMjc0MSwiZXhwIjoxNjMzNTA2MzQxfQ.nzVtYUwzDt6tNJnh9hNUPZ-V8QGRxw3JLoM-DVOYzms
 
 ###
 
 POST http://localhost:3003/api/blogs/
 content-type: application/json
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYxNWQxNTgwNTdkZGJjY2Q2MWE2MWMzYyIsImlhdCI6MTYzMzQ5OTAxOCwiZXhwIjoxNjMzNTAyNjE4fQ.GKyQi3bIWhPgq46-C-e2QTf3vFZUr0js3cqMiEAKRwU
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYxNWQxNTgwNTdkZGJjY2Q2MWE2MWMzYyIsImlhdCI6MTYzMzUwMjc0MSwiZXhwIjoxNjMzNTA2MzQxfQ.nzVtYUwzDt6tNJnh9hNUPZ-V8QGRxw3JLoM-DVOYzms
 
 {
-    "title": "Momo is awesome!",
+    "title": "Dubai is awesome!",
     "author": "JJ",
     "url": "http://jj.com",
     "likes": 10
@@ -24,5 +25,6 @@ content-type: application/json
 
 ###
 
-DELETE  http://localhost:3003/api/blogs/615ba8f368f5f375229e48b2
+DELETE  http://localhost:3003/api/blogs/615d36eaf58cec6e1c498094
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYxNWQxNTgwNTdkZGJjY2Q2MWE2MWMzYyIsImlhdCI6MTYzMzUwMjc0MSwiZXhwIjoxNjMzNTA2MzQxfQ.nzVtYUwzDt6tNJnh9hNUPZ-V8QGRxw3JLoM-DVOYzms
 
